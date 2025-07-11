@@ -21,7 +21,7 @@ export default function BetDetails({
       <div className="flex flex-col">
         <div className="flex flex-row justify-between gap-3">
           <p className="text-white text-lg">{rightSection.betAmount}</p>
-          <p className="text-[#7b7b7c] text-md ml-8">Bet Amount</p>
+          <p className="text-[#7b7b7c] text- ml-8">Bet Amount</p>
         </div>
 
         <div className="flex flex-row justify-between gap-3">

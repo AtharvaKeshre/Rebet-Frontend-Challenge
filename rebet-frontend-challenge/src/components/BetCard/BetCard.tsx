@@ -15,7 +15,7 @@ const poppins = Poppins({
 
 // Constants
 const BORDER_GRADIENTS = {
-  default: `linear-gradient(to right, rgba(252, 66, 51, 0.5) 0%, rgba(252, 66, 51, 0.5) 25%, rgba(255, 238, 146, 1) 50%, rgba(252, 66, 51, 0.5) 75%, rgba(252, 66, 51, 0.5) 100%)`,
+  default: `linear-gradient(to right, rgba(252, 66, 51, 0.5) 0%, rgba(252, 66, 51, 0.5) 15%, rgba(255, 238, 146, 1) 50%, rgba(252, 66, 51, 0.5) 85%, rgba(252, 66, 51, 0.5) 100%)`,
   left: `linear-gradient(to right, rgba(98, 22, 49, 1) 0%, rgba(98, 22, 49, 1) 25%, rgba(218, 73, 108, 1) 50%, rgba(98, 22, 49, 1) 75%, rgba(98, 22, 49, 1) 100%)`,
   right: `linear-gradient(to right, rgba(26, 80, 62, 1) 0%, rgba(26, 80, 62, 1) 25%, rgba(64, 198, 134, 1) 50%, rgba(26, 80, 62, 1) 75%, rgba(26, 80, 62, 1) 100%)`
 } as const;
@@ -81,7 +81,7 @@ export default function BetCard({
         className="p-[1px] rounded-2xl w-[500px] h-[600px] transition-all duration-200 ease-out"
         style={{ backgroundImage: borderGradient }}
       >
-        <div className="bg-[linear-gradient(to_bottom,#030712_0%,#6a381b_30%,#030712_80%)] rounded-[1rem] w-full h-full flex flex-col">
+        <div className="bg-[linear-gradient(to_bottom,#030712_0%,#5c331c_30%,#030712_80%)] rounded-[1rem] w-full h-full flex flex-col">
           
           <UserHeader />
           
@@ -110,7 +110,7 @@ export default function BetCard({
                 
                 {/* Odds Section */}
                 <div className="flex flex-col items-center">
-                  <p className="font-medium text-amber-600 text-sm mb-2">ODDS</p>
+                  <p className=" text-amber-600 text-xs my-1 mb-2">ODDS</p>
                   
                   {/* Odds Display with Gradient Border */}
                   <div className="p-[1px] rounded-full bg-[linear-gradient(to_bottom,#fca035_0%,#fa4231_5%,#fa4231_70%,#fa4231_100%)]">

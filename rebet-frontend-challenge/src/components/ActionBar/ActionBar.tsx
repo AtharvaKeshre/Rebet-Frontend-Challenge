@@ -29,13 +29,10 @@ const PADDING = 42.5;
 const DIRECTION_THRESHOLD = 30;
 const ACTION_THRESHOLD = 190;
 
-// Animation constants
-const ANIMATION_DURATION = 500; 
+const ANIMATION_DURATION = 800; 
 const BOUNCE_INTENSITY = 0.15; 
-const SPRING_TENSION = 0.8; 
-const SPRING_FRICTION = 0.6; 
 
-// Asset maps for better organization
+
 const ASSETS = {
   close: { default: white_close, left: red_close, right: green_close },
   accept: { default: white_accept, left: red_check, right: green_check },
@@ -46,14 +43,14 @@ const ASSETS = {
 
 const GRADIENTS = {
   border: {
-    default: `linear-gradient(to right, rgba(252, 66, 51, 0.5) 0%, rgba(252, 66, 51, 0.5) 25%, rgba(255, 238, 146, 1) 50%, rgba(252, 66, 51, 0.5) 75%, rgba(252, 66, 51, 0.5) 100%)`,
+    default: `linear-gradient(to right, rgba(252, 66, 51, 0.5) 0%, rgba(252, 66, 51, 0.5) 20%, rgba(255, 238, 146, 1) 50%, rgba(252, 66, 51, 0.5) 80%, rgba(252, 66, 51, 0.5) 100%)`,
     left: `linear-gradient(to right, rgba(98, 22, 49, 1) 0%, rgba(98, 22, 49, 1) 25%, rgba(218, 73, 108, 1) 50%, rgba(98, 22, 49, 1) 75%, rgba(98, 22, 49, 1) 100%)`,
     right: `linear-gradient(to right, rgba(26, 80, 62, 1) 0%, rgba(26, 80, 62, 1) 25%, rgba(64, 198, 134, 1) 50%, rgba(26, 80, 62, 1) 75%, rgba(26, 80, 62, 1) 100%)`
   },
   background: {
     default: 'linear-gradient(to bottom, #212029 0%, #111015 100%)',
-    left: `linear-gradient(to bottom, rgba(98, 22, 49, 1) 0%, rgba(255, 90, 139, 1) 100%)`,
-    right: `linear-gradient(to bottom, rgba(27, 125, 67, 1) 0%, rgba(108, 231, 150, 1) 100%)`
+    left: `linear-gradient(to bottom, rgba(98, 22, 49, 1) 10%, rgba(255, 90, 139, 1) 90%)`,
+    right: `linear-gradient(to bottom, rgba(27, 125, 67, 1) 10%, rgba(108, 231, 150, 1) 90%)`
   }
 } as const;
 
@@ -77,8 +74,6 @@ interface ActionBarProps {
 }
 
 
-
-
 const easeOutCubic = (t: number): number => {
   return 1 - Math.pow(1 - t, 3);
 };
@@ -91,9 +86,7 @@ const easeOutQuint = (t: number): number => {
   return 1 - Math.pow(1 - t, 5);
 };
 
-// Smooth bezier curve for natural movement
 const easeOutSmooth = (t: number): number => {
-  // Custom bezier curve: cubic-bezier(0.25, 0.46, 0.45, 0.94)
   const p1 = 0.25;
   const p2 = 0.46;
   const p3 = 0.45;
@@ -273,7 +266,7 @@ export default function ActionBar({ onDragStateChange }: ActionBarProps) {
 
     setIsDragging(false);
 
-    // If the circle was moved significantly, create bounce animation
+    // If the circle was moved significantly, created bounce animation
     if (Math.abs(currentX) > 3 || Math.abs(currentY) > 3) {
       createBounceSequence(currentX);
     } else {
@@ -336,12 +329,12 @@ export default function ActionBar({ onDragStateChange }: ActionBarProps) {
         className="rounded-3xl h-20 flex flex-row justify-between items-center text-white w-full transition-all duration-200 ease-out"
         style={{ background: styles.backgroundGradient }}
       >
-        <div className="relative flex flex-row justify-center items-center gap-6 ml-[7px]">
+        <div className="relative flex flex-row justify-center items-center gap-6 ml-[5px] p">
           
           {/* Decline Section */}
           <div className="flex flex-row items-center gap-3">
             <Image src={assets.closeIcon} alt="close" className="w-8 h-8" />
-            <p className="text-xl" style={{ color: styles.textColor }}>
+            <p className="text-xl font-semibold" style={{ color: styles.textColor }}>
               Decline
             </p>
           </div>
@@ -398,7 +391,7 @@ export default function ActionBar({ onDragStateChange }: ActionBarProps) {
 
           {/* Accept Section */}
           <div className="flex flex-row items-center gap-2">
-            <p className="text-xl" style={{ color: styles.textColor }}>
+            <p className="text-xl font-semibold" style={{ color: styles.textColor }}>
               Accept
             </p>
             <Image src={assets.acceptIcon} alt="accept" className="w-8 h-8" />

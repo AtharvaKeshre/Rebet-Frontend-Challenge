@@ -41,3 +41,15 @@ body {
   color: var(--foreground);
   font-family: var(--font-gilroy);
 }
+
+.user-header-base-gradient {
+  background: linear-gradient(to right, #6a7282, #393845, #2F2E3A);
+}
+
+.user-header-slice::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(130deg, #393845 30%, #454453 50%, #393845 70%);
+}

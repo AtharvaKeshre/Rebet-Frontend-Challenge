@@ -17,7 +17,7 @@ export default function TeamCard({ name, logo, status, score }: TeamCardProps) {
         height={70}
         className="w-[70px] h-[70px] rounded-full bg-black object-center object-contain"
       />
-      <div className="text-lg font-medium text-center text-white">{name}</div>
+      <div className="text-md font-medium text-center text-white">{name}</div>
       <div className="relative w-[150px] mt-8">
         
         <div 
