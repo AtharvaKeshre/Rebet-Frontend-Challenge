@@ -81,15 +81,17 @@ export default function BetCard({
         className="p-[1px] rounded-2xl w-[500px] h-[600px] transition-all duration-200 ease-out"
         style={{ backgroundImage: borderGradient }}
       >
-        <div className="bg-gradient-to-b from-[#6a381b] to-gray-950 rounded-[1rem] w-full h-full flex flex-col">
+        <div className="bg-[linear-gradient(to_bottom,#030712_0%,#6a381b_30%,#030712_80%)] rounded-[1rem] w-full h-full flex flex-col">
+          
           <UserHeader />
           
           <div className="flex-1 flex flex-col">
             <MatchInfo />
             
             <div className="flex items-start justify-between mx-4 flex-1">
+              <div className="absolute rounded-full h-[68px] w-[68px] bg-[#c9c9c9] translate-x-[39px] translate-y-[9px]"></div>
               {/* Team 1 */}
-              <div className="flex-1 flex justify-center">
+              <div className="flex-1 flex justify-center z-10">
                 <TeamCard
                   name={team1.name}
                   logo={team1.logo}
@@ -100,7 +102,7 @@ export default function BetCard({
               
               {/* Center Section - Date, Time, Odds */}
               <div className="flex-1 flex flex-col items-center justify-center mt-3">
-                {/* Date & Time */}
+
                 <div className="text-center mb-6">
                   <p className="font-semibold text-amber-600 text-lg">{matchDate}</p>
                   <p className="text-white text-sm">{matchTime}</p>
@@ -111,8 +113,8 @@ export default function BetCard({
                   <p className="font-medium text-amber-600 text-sm mb-2">ODDS</p>
                   
                   {/* Odds Display with Gradient Border */}
-                  <div className="p-[1px] rounded-full bg-gradient-to-b from-[rgba(255,238,146,1)] via-[rgba(252,66,51,0.5)] to-[rgba(252,66,51,0.5)]">
-                    <div className="bg-gradient-to-b from-[#fa4231] via-[#fc6932] to-[#fca035] rounded-full flex items-center px-[15px] py-0.5">
+                  <div className="p-[1px] rounded-full bg-[linear-gradient(to_bottom,#fca035_0%,#fa4231_5%,#fa4231_70%,#fa4231_100%)]">
+                    <div className="bg-[linear-gradient(to_bottom,#fa4231_0%,#fc6932_60%,#fca035_100%)] rounded-full flex items-center px-[15px] py-0.5">
                       <p className="text-black font-bold text-xl italic">{odds}</p>
                     </div>
                   </div>

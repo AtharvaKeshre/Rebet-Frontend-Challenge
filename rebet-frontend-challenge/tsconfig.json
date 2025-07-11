@@ -21,8 +21,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/StaticAssets/*": ["./StaticAssets/*"],
-      "@/components/*": ["./src/components/*"]
-
+      "@/components/*": ["./src/components/*"],
+      "@/AnimatedAssets/*": ["./AnimatedAssets/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

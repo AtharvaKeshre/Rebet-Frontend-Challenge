@@ -19,9 +19,9 @@ import green_check from "@/StaticAssets/green_check.png";
 import green_close from "@/StaticAssets/green_close.png";
 
 // Animated assets
-import glowing_circle from "../../../AnimatedAssets/glowing_circle.json";
-import glowing_left_arrows from "../../../AnimatedAssets/glowing_left_arrows.json";
-import glowing_right_arrows from "../../../AnimatedAssets/glowing_right_arrows.json";
+import glowing_circle from "@/AnimatedAssets/glowing_circle.json";
+import glowing_left_arrows from "@/AnimatedAssets/glowing_left_arrows.json";
+import glowing_right_arrows from "@/AnimatedAssets/glowing_right_arrows.json";
 
 // Constants
 const MAX_MOVE = 200;
@@ -45,7 +45,7 @@ const GRADIENTS = {
     right: `linear-gradient(to right, rgba(26, 80, 62, 1) 0%, rgba(26, 80, 62, 1) 25%, rgba(64, 198, 134, 1) 50%, rgba(26, 80, 62, 1) 75%, rgba(26, 80, 62, 1) 100%)`
   },
   background: {
-    default: '#1f2937',
+    default: 'linear-gradient(to bottom, #212029 0%, #111015 100%)',
     left: `linear-gradient(to bottom, rgba(98, 22, 49, 1) 0%, rgba(255, 90, 139, 1) 100%)`,
     right: `linear-gradient(to bottom, rgba(27, 125, 67, 1) 0%, rgba(108, 231, 150, 1) 100%)`
   }
