@@ -24,10 +24,16 @@ import glowing_left_arrows from "@/AnimatedAssets/glowing_left_arrows.json";
 import glowing_right_arrows from "@/AnimatedAssets/glowing_right_arrows.json";
 
 // Constants
-const MAX_MOVE = 200;
+const MAX_MOVE = 220;
 const PADDING = 42.5;
-const DIRECTION_THRESHOLD = 0.5;
+const DIRECTION_THRESHOLD = 30;
 const ACTION_THRESHOLD = 190;
+
+// Animation constants
+const ANIMATION_DURATION = 500; 
+const BOUNCE_INTENSITY = 0.15; 
+const SPRING_TENSION = 0.8; 
+const SPRING_FRICTION = 0.6; 
 
 // Asset maps for better organization
 const ASSETS = {
@@ -70,14 +76,43 @@ interface ActionBarProps {
   }) => void;
 }
 
+
+
+
+const easeOutCubic = (t: number): number => {
+  return 1 - Math.pow(1 - t, 3);
+};
+
+const easeOutQuart = (t: number): number => {
+  return 1 - Math.pow(1 - t, 4);
+};
+
+const easeOutQuint = (t: number): number => {
+  return 1 - Math.pow(1 - t, 5);
+};
+
+// Smooth bezier curve for natural movement
+const easeOutSmooth = (t: number): number => {
+  // Custom bezier curve: cubic-bezier(0.25, 0.46, 0.45, 0.94)
+  const p1 = 0.25;
+  const p2 = 0.46;
+  const p3 = 0.45;
+  const p4 = 0.94;
+  
+  const u = 1 - t;
+  return 3 * u * u * t * p2 + 3 * u * t * t * p4 + t * t * t;
+};
+
 export default function ActionBar({ onDragStateChange }: ActionBarProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
   const [dragStart, setDragStart] = useState<Position>({ x: 0, y: 0 });
+  const [isAnimating, setIsAnimating] = useState(false);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const circleRef = useRef<HTMLDivElement>(null);
   const positionRef = useRef<Position>({ x: 0, y: 0 });
+  const animationRef = useRef<number | null>(null);
 
   // Calculate current drag state
   const dragState: DragState = useMemo(() => {
@@ -135,28 +170,101 @@ export default function ActionBar({ onDragStateChange }: ActionBarProps) {
     return { x: newX, y: newY };
   }, []);
 
+  const animateToPosition = useCallback((
+    startPos: Position,
+    endPos: Position,
+    duration: number,
+    easingFunc: (t: number) => number = easeOutCubic,
+    onComplete?: () => void
+  ) => {
+    const startTime = performance.now();
+    setIsAnimating(true);
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = easingFunc(progress);
+
+      const currentPos = {
+        x: startPos.x + (endPos.x - startPos.x) * easedProgress,
+        y: startPos.y + (endPos.y - startPos.y) * easedProgress
+      };
+
+      setPosition(currentPos);
+
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate);
+      } else {
+        setIsAnimating(false);
+        onComplete?.();
+      }
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+  }, []);
+
+  const createBounceSequence = useCallback((initialX: number) => {
+    const startPos = { x: initialX, y: 0 };
+    const finalPos = { x: 0, y: 0 };
+    
+    // For small movements, use gentle spring animation
+    if (Math.abs(initialX) < 50) {
+      animateToPosition(startPos, finalPos, ANIMATION_DURATION * 0.6, easeOutSmooth);
+      return;
+    }
+    
+    // For larger movements, create a more elaborate sequence
+    const bounceDirection = initialX < 0 ? 1 : -1;
+    const bounceDistance = Math.abs(initialX) * BOUNCE_INTENSITY;
+    
+    // Multi-stage smooth bounce
+    const firstBouncePos = { x: bounceDistance * bounceDirection * 0.8, y: 0 };
+    const secondBouncePos = { x: bounceDistance * bounceDirection * -0.3, y: 0 };
+    const thirdBouncePos = { x: bounceDistance * bounceDirection * 0.1, y: 0 };
+    
+    // Stage 1: Initial pull back (40% of time)
+    animateToPosition(startPos, firstBouncePos, ANIMATION_DURATION * 0.4, easeOutQuint, () => {
+      // Stage 2: Counter bounce (30% of time)
+      animateToPosition(firstBouncePos, secondBouncePos, ANIMATION_DURATION * 0.3, easeOutSmooth, () => {
+        // Stage 3: Small correction (20% of time)
+        animateToPosition(secondBouncePos, thirdBouncePos, ANIMATION_DURATION * 0.2, easeOutCubic, () => {
+          // Stage 4: Final settle (10% of time)
+          animateToPosition(thirdBouncePos, finalPos, ANIMATION_DURATION * 0.1, easeOutQuart);
+        });
+      });
+    });
+  }, [animateToPosition]);
+
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (!circleRef.current || !containerRef.current) return;
+    if (!circleRef.current || !containerRef.current || isAnimating) return;
+    
+    // Cancel any ongoing animation
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      setIsAnimating(false);
+    }
     
     setIsDragging(true);
     setDragStart({ x: e.clientX, y: e.clientY });
-  }, []);
+  }, [isAnimating]);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging || !containerRef.current) return;
+    if (!isDragging || !containerRef.current || isAnimating) return;
     
     const deltaX = e.clientX - dragStart.x;
     const deltaY = e.clientY - dragStart.y;
     
     const newPosition = constrainPosition(deltaX, deltaY);
     setPosition(newPosition);
-  }, [isDragging, dragStart, constrainPosition]);
+  }, [isDragging, dragStart, constrainPosition, isAnimating]);
 
   const handleMouseUp = useCallback(() => {
-    if (!isDragging) return;
+    if (!isDragging || isAnimating) return;
 
     const currentX = positionRef.current.x;
+    const currentY = positionRef.current.y;
 
+    // Handle action threshold
     if (currentX < -ACTION_THRESHOLD) {
       alert('Declined! Circle was dragged to the left.');
     } else if (currentX > ACTION_THRESHOLD) {
@@ -164,8 +272,20 @@ export default function ActionBar({ onDragStateChange }: ActionBarProps) {
     }
 
     setIsDragging(false);
-    setPosition({ x: 0, y: 0 });
-  }, [isDragging]);
+
+    // If the circle was moved significantly, create bounce animation
+    if (Math.abs(currentX) > 3 || Math.abs(currentY) > 3) {
+      createBounceSequence(currentX);
+    } else {
+      // If barely moved, just settle with ultra-smooth animation
+      animateToPosition(
+        { x: currentX, y: currentY },
+        { x: 0, y: 0 },
+        800,
+        easeOutSmooth
+      );
+    }
+  }, [isDragging, isAnimating, createBounceSequence, animateToPosition]);
 
   // Set up mouse event listeners
   useEffect(() => {
@@ -179,6 +299,15 @@ export default function ActionBar({ onDragStateChange }: ActionBarProps) {
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isDragging, handleMouseMove, handleMouseUp]);
+
+  // Cleanup animation on unmount
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
 
   const ArrowComponent = ({ 
     isLeft, 
@@ -200,7 +329,7 @@ export default function ActionBar({ onDragStateChange }: ActionBarProps) {
   return (
     <div 
       ref={containerRef}
-      className="p-[2.5px] rounded-3xl m-4 mb-7 transition-all duration-200 ease-out"
+      className="p-[2.5px] rounded-3xl m-4 mb-7 transition-all duration-200 ease-out overflow-hidden"
       style={{ backgroundImage: styles.borderGradient }}
     >
       <div 
@@ -239,10 +368,13 @@ export default function ActionBar({ onDragStateChange }: ActionBarProps) {
             {/* Draggable Circle */}
             <div 
               ref={circleRef}
-              className="w-full h-full select-none cursor-grab active:cursor-grabbing"
+              className={`w-full h-full select-none transition-all duration-75 ${
+                isDragging || isAnimating ? 'cursor-grabbing scale-105' : 'cursor-grab hover:scale-102'
+              }`}
               style={{
                 transform: `translate(${position.x}px, ${position.y}px)`,
-                transition: isDragging ? 'none' : 'transform 0.2s ease-out'
+                transition: isDragging || isAnimating ? 'none' : 'transform 0.2s ease-out, scale 0.2s ease-out',
+                filter: isDragging ? 'brightness(1.1)' : 'brightness(1)',
               }}
               onMouseDown={handleMouseDown}
             >
